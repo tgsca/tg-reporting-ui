@@ -1,0 +1,7 @@
+{
+    "apiUrl": {
+        "local": "http://localhost:3000/api",
+        "prod": "https://tg-reporting-server.herokuapp.com/api"
+    },
+    "currentEnvironment": "prod"
+}

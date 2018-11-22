@@ -1,0 +1,16 @@
+{
+    "limit": {
+        "blockedRatio": {
+            "warning": 0.25,
+            "danger": 0.5
+        },
+        "failedRatio": {
+            "warning": 0.2,
+            "danger": 0.3
+        },
+        "rejectedRatio": {
+            "warning": 0.25,
+            "danger": 0.5
+        }
+    }
+}
