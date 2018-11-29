@@ -18,3 +18,23 @@ code {
 .text-small {
     font-size: 14px;
 }
+
+.text-grey {
+    color: grey;
+}
+
+.text-green {
+    color: green;
+}
+
+.text-red {
+    color: red;
+}
+
+.table-top-parent {
+    background-color: aliceblue;
+}
+
+.table-parent {
+    background-color: rgb(250, 250, 250);
+}

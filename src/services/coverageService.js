@@ -8,6 +8,12 @@ export function getCoveragesByCycle(cycle) {
     return http.get(`${apiUrl[currentEnvironment]}/coverages?cycle._id=${cycle._id}`);
 }
 
+export function getLastCoverage(coverages) {
+    const last = getLast(coverages);
+    if (!last._id) return [];
+    return last;
+}
+
 export function getLastCoverageForPie(coverages) {
     const last = getLast(coverages);
     if (!last._id) return [];
@@ -25,18 +31,20 @@ export function getHistoricalCoverageKpis(coverages) {
 
     const kpis = [];
     for (let coverage of sorted) {
-        let onHoldRatio = coverage.onHold / coverage.sum;
-        let inProgressRatio = coverage.inProgress / coverage.sum;
-        let openRatio = coverage.open / coverage.sum;
+        let { sum, covered, onHold, inProgress, open, KPIs } = coverage;
+        let coverageRatio = covered / sum;
+        let onHoldRatio = onHold / sum;
+        let inProgressRatio = inProgress / sum;
+        let openRatio = open / sum;
         kpis.push({
             reportingDate: coverage.reportingDate,
-            totalCount: coverage.sum,
-            coverageRatio: formatPercent(coverage.KPIs.coverageRatio),
+            totalCount: sum,
+            coverageRatio: formatPercent(coverageRatio),
             onHoldRatio: formatPercent(onHoldRatio),
             inProgressRatio: formatPercent(inProgressRatio),
             openRatio: formatPercent(openRatio),
-            timeElapsedRatio: formatPercent(coverage.KPIs.timeElapsedRatio),
-            timeAvailableRatio: formatPercent(coverage.KPIs.timeAvailableRatio)
+            timeElapsedRatio: formatPercent(KPIs.timeElapsedRatio),
+            timeAvailableRatio: formatPercent(KPIs.timeAvailableRatio)
         });
     }
 

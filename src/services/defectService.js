@@ -8,6 +8,12 @@ export function getDefectsByProject(project) {
     return http.get(`${apiUrl[currentEnvironment]}/defects?project._id=${project._id}`);
 }
 
+export function getLastBug(bugs) {
+    const last = getLast(bugs);
+    if (!last._id) return [];
+    return last;
+}
+
 export function getLastDefectForPie(defects, view = 'status') {
     const last = getLast(defects);
     if (!last._id) return [];
@@ -52,10 +58,25 @@ export function getHistoricalDefectKpis(defects) {
 
     const kpis = [];
     for (let defect of sorted) {
+        let { reportingDate, sum, new: open, inClarification, inImplementation, inInstallation, inRetest, rejected, closed } = defect;
+        let openSum = open.sum + inClarification.sum + inImplementation.sum + inInstallation.sum + inRetest.sum;
+
         kpis.push({
-            reportingDate: defect.reportingDate,
-            fixedRatio: formatPercent(defect.KPIs.fixedRatio),
-            rejectedRatio: formatPercent(defect.KPIs.rejectedRatio)
+            reportingDate: reportingDate,
+            totalCount: sum.sum,
+            openRatio: formatPercent(openSum / sum.sum),
+            newRatioRel: formatPercent(open.sum / openSum),
+            newRatioAbs: formatPercent(open.sum / sum.sum),
+            inClarificationRatioRel: formatPercent(inClarification.sum / openSum),
+            inClarificationRatioAbs: formatPercent(inClarification.sum / sum.sum),
+            inImplementationRatioRel: formatPercent(inImplementation.sum / openSum),
+            inImplementationRatioAbs: formatPercent(inImplementation.sum / sum.sum),
+            inInstallationRatioRel: formatPercent(inInstallation.sum / openSum),
+            inInstallationRatioAbs: formatPercent(inInstallation.sum / sum.sum),
+            inRetestRatioRel: formatPercent(inRetest.sum / openSum),
+            inRetestRatioAbs: formatPercent(inRetest.sum / sum.sum),
+            fixedRatio: formatPercent(closed.sum / sum.sum),
+            rejectedRatio: formatPercent(rejected.sum / sum.sum)
         });
     }
 
@@ -63,7 +84,7 @@ export function getHistoricalDefectKpis(defects) {
 }
 
 export function getLastDefectKpis(defects) {
-    const last = getLast(defects);
-    if (!last._id) return [];
-    return last.KPIs;
+    const last = getLast(getHistoricalDefectKpis(defects));
+    if (!last.totalCount) return [];
+    return last;
 }

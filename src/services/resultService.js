@@ -8,6 +8,12 @@ export function getResultsByCycle(cycle) {
     return http.get(`${apiUrl[currentEnvironment]}/results?cycle._id=${cycle._id}`);
 }
 
+export function getLastResult(results) {
+    const last = getLast(results);
+    if (!last._id) return [];
+    return last;
+}
+
 export function getLastResultForPie(results) {
     const last = getLast(results);
     if (!last._id) return [];
@@ -23,8 +29,9 @@ export function getHistoricalResultKpis(results) {
 
     const kpis = [];
     for (let result of sorted) {
-        let { reportingDate, KPIs } = result;
+        let { reportingDate, notCompleted, noRun, sum, KPIs } = result;
         let { executionRatio, passedRatio, failedRatio, blockedRatio, timeElapsedRatio, timeAvailableRatio } = KPIs;
+        let unexecutedRatio = (notCompleted + noRun) / sum;
 
         kpis.push({
             reportingDate: reportingDate,
@@ -34,8 +41,8 @@ export function getHistoricalResultKpis(results) {
             failedRatioAbs: formatPercent(failedRatio),
             failedRatioRel: formatPercent(failedRatio * executionRatio),
             blockedRatio: formatPercent(blockedRatio),
-            unexecutedRatio: formatPercent(1 - executionRatio - blockedRatio),
-            testcaseTotalCount: result.sum,
+            unexecutedRatio: formatPercent(unexecutedRatio),
+            testcaseTotalCount: sum,
             timeElapsedRatio: formatPercent(timeElapsedRatio),
             timeAvailableRatio: formatPercent(timeAvailableRatio)
         });

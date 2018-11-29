@@ -8,6 +8,13 @@ const DefectStackedArea = ({ defects, milestones }) => {
     const sortedStatus = getSortedDefects(defects, 'status');
     const sortedPriority = getSortedDefects(defects, 'priorityWithoutClosed');
 
+    const areaLabel = {
+        // fill: 'white',
+        // fontSize: 12,
+        // position: 'insideTop',
+        // value: 'absolute'
+    };
+
     return (
         <React.Fragment>
             <ComposedChart

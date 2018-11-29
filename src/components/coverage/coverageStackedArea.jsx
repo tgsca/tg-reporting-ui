@@ -5,7 +5,6 @@ import { getHistoricalCoverageKpis } from '../../services/coverageService';
 
 const CoverageStackedArea = ({ coverages }) => {
     const sorted = getHistoricalCoverageKpis(coverages);
-    console.log(sorted);
     return (
         <React.Fragment>
             <LineChart width={960} height={150} data={sorted} syncId="covLineArea" margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>

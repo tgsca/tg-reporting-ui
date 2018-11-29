@@ -18,3 +18,9 @@ export function getSorted(items) {
     const formatted = formatTimestampToMilliseconds(items, timestampAttribute);
     return sortByTimestamp(formatted, timestampAttribute);
 }
+
+export function checkDeltaToLastPeriod(items, attribute) {
+    if (items.length <= 1) return 0;
+    const sorted = getSorted(items);
+    return sorted[sorted.length - 1][attribute] - sorted[sorted.length - 2][attribute];
+}

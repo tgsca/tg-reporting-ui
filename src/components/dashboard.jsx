@@ -162,6 +162,7 @@ class Dashboard extends Component {
                                 <ExecutionColumn
                                     results={results}
                                     milestones={milestones}
+                                    currentCycle={currentCycle}
                                     onDetails={this.handleDetails}
                                     onKpiPopover={this.popoverSingleKpi}
                                 />
