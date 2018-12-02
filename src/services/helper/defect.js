@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function getStatusForPie(defect) {
     return {
         _id: defect.id,
@@ -31,7 +33,7 @@ export function getPriorityForPie(defect) {
 export function getAggregatedByStatus(defect) {
     return {
         _id: defect.id,
-        reportingDate: defect.reportingDate,
+        reportingDate: moment(defect.reportingDate).valueOf(),
         rejected: defect.rejected.sum,
         closed: defect.closed.sum,
         inRetest: defect.inRetest.sum,
@@ -39,7 +41,7 @@ export function getAggregatedByStatus(defect) {
         inImplementation: defect.inImplementation.sum,
         inClarification: defect.inClarification.sum,
         new: defect.new.sum,
-        sum: defect.sum.sum,
+        totalCount: defect.sum.sum,
         KPIs: { ...defect.KPIs }
     };
 }
@@ -47,13 +49,13 @@ export function getAggregatedByStatus(defect) {
 export function getAggregatedByPriority(defect, options) {
     return {
         _id: defect.id,
-        reportingDate: defect.reportingDate,
+        reportingDate: moment(defect.reportingDate).valueOf(),
         urgent: getPrioritySum(defect, 'urgent', options),
         high: getPrioritySum(defect, 'high', options),
         medium: getPrioritySum(defect, 'medium', options),
         low: getPrioritySum(defect, 'low', options),
         unrated: getPrioritySum(defect, 'unrated', options),
-        sum: defect.sum.sum,
+        totalCount: defect.sum.sum,
         KPIs: { ...defect.KPIs }
     };
 }

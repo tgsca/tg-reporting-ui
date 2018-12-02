@@ -28,7 +28,7 @@ const DefectStackedArea = ({ defects, milestones }) => {
                 <XAxis dataKey="reportingDate" hide={true} scale="time" type="number" domain={['auto', 'auto']} />
                 <YAxis tick={{ fontSize: 12 }} />
                 <Tooltip labelFormatter={date => moment(date).format('DD.MM.YYYY HH:mm:ss')} />
-                <Line type="monotone" name="Total Count" dataKey="sum" stroke="#01042d" strokeWidth={2} dot={false} />
+                <Line type="monotone" name="Total Count" dataKey="totalCount" stroke="#01042d" strokeWidth={2} dot={false} />
                 <Area type="monotone" name="Closed" dataKey="closed" stackId="1" stroke="#01042d" fill="#01042d" />
                 <Area type="monotone" name="Rejected" dataKey="rejected" stackId="1" stroke="#ca8102" fill="#fdc668" />
             </ComposedChart>

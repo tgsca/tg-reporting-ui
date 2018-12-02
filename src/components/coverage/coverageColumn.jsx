@@ -5,17 +5,15 @@ import Table from 'react-bootstrap/lib/Table';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import CoveragePie from './coveragePie';
 import TrendIcon from '../common/trendIcon';
-import { getHistoricalCoverageKpis, getLastCoverageKpis, getLastCoverage } from '../../services/coverageService';
-import { checkDeltaToLastPeriod } from '../../services/helper/itemArray';
+import { getLast, checkDeltaToLastPeriod } from '../../services/helper/itemArray';
 
-const CoverageColumn = ({ coverages, onDetails, onKpiPopover }) => {
+const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) => {
     if (coverages.length === 0) return null;
 
-    const histCoverageKpis = getHistoricalCoverageKpis(coverages);
-    const currCoverageKpis = getLastCoverageKpis(coverages);
-    const { coverageRatio, onHoldRatio, inProgressRatio, openRatio } = currCoverageKpis;
+    const currCoverageKpis = getLast(coverageKpis);
+    const { coverageRatio, blockedRatioAbs, inProgressRatioAbs, openRatioAbs } = currCoverageKpis;
 
-    const currCoverage = getLastCoverage(coverages);
+    const currCoverage = getLast(coverages);
     const { sum, covered, onHold, inProgress, open } = currCoverage;
 
     return (
@@ -40,7 +38,7 @@ const CoverageColumn = ({ coverages, onDetails, onKpiPopover }) => {
                             <td className="text-right">{sum}</td>
                             <td />
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histCoverageKpis, 'totalCount')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'totalCount')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -49,28 +47,28 @@ const CoverageColumn = ({ coverages, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histCoverageKpis, 'coverageRatio', 'Coverage Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(coverageKpis, 'coverageRatio', 'Coverage Ratio', '#434b89')}
                                 >
-                                    <div>{coverageRatio} %</div>
+                                    <div>{(coverageRatio * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histCoverageKpis, 'coverageRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'coverageRatio')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
-                            <td>On Hold</td>
+                            <td>Blocked</td>
                             <td className="text-right">{onHold}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histCoverageKpis, 'onHoldRatio', 'On Hold Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(coverageKpis, 'blockedRatioAbs', 'On Hold Ratio', '#434b89')}
                                 >
-                                    <div>{onHoldRatio} %</div>
+                                    <div>{(blockedRatioAbs * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histCoverageKpis, 'onHoldRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'blockedRatioAbs')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -79,13 +77,13 @@ const CoverageColumn = ({ coverages, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histCoverageKpis, 'inProgressRatio', 'In Progress Ratio', '#666666')}
+                                    overlay={() => onKpiPopover(coverageKpis, 'inProgressRatioAbs', 'In Progress Ratio', '#666666')}
                                 >
-                                    <div>{inProgressRatio} %</div>
+                                    <div>{(inProgressRatioAbs * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histCoverageKpis, 'inProgressRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'inProgressRatioAbs')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -94,13 +92,13 @@ const CoverageColumn = ({ coverages, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histCoverageKpis, 'openRatio', 'Open Ratio', '#666666')}
+                                    overlay={() => onKpiPopover(coverageKpis, 'openRatioAbs', 'Open Ratio', '#666666')}
                                 >
-                                    <div>{openRatio} %</div>
+                                    <div>{(openRatioAbs * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histCoverageKpis, 'openRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'openRatioAbs')} />
                             </td>
                         </tr>
                     </tbody>

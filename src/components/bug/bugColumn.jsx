@@ -5,14 +5,12 @@ import Table from 'react-bootstrap/lib/Table';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import DefectPie from './defectPie';
 import TrendIcon from '../common/trendIcon';
-import { getHistoricalDefectKpis, getLastDefectKpis, getLastBug } from '../../services/defectService';
-import { checkDeltaToLastPeriod } from '../../services/helper/itemArray';
+import { getLast, checkDeltaToLastPeriod } from '../../services/helper/itemArray';
 
-const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
+const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
     if (bugs.length === 0) return null;
 
-    const histBugKpis = getHistoricalDefectKpis(bugs);
-    const currBugKpis = getLastDefectKpis(bugs);
+    const currBugKpis = getLast(bugKpis);
     const {
         fixedRatio,
         rejectedRatio,
@@ -24,7 +22,7 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
         inRetestRatioRel
     } = currBugKpis;
 
-    const currBug = getLastBug(bugs);
+    const currBug = getLast(bugs);
     const { sum, new: open, inClarification, inImplementation, inInstallation, inRetest, closed, rejected } = currBug;
 
     const nestedClass = 'fa fa-angle-right';
@@ -51,7 +49,7 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">{sum.sum}</td>
                             <td />
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'totalCount')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'totalCount', 'number')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -59,9 +57,9 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 {open.sum + inClarification.sum + inImplementation.sum + inInstallation.sum + inRetest.sum}
                             </td>
-                            <td className="text-right">{openRatio} %</td>
+                            <td className="text-right">{(openRatio * 1).toFixed(0)} %</td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'openRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'openRatio')} />
                             </td>
                         </tr>
                         <tr>
@@ -72,13 +70,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histBugKpis, 'newRatioRel', 'New Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(bugKpis, 'newRatioRel', 'New Ratio', '#434b89')}
                                 >
-                                    <div>{newRatioRel} %</div>
+                                    <div>{(newRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'newRatioRel')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'newRatioRel')} />
                             </td>
                         </tr>
                         <tr>
@@ -89,15 +87,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() =>
-                                        onKpiPopover(histBugKpis, 'inClarificationRatioRel', 'In Clarification Ratio', '#434b89')
-                                    }
+                                    overlay={() => onKpiPopover(bugKpis, 'inClarificationRatioRel', 'In Clarification Ratio', '#434b89')}
                                 >
-                                    <div>{inClarificationRatioRel} %</div>
+                                    <div>{(inClarificationRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'inClarificationRatioRel')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'inClarificationRatioRel')} />
                             </td>
                         </tr>
                         <tr>
@@ -108,15 +104,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() =>
-                                        onKpiPopover(histBugKpis, 'inImplementationRatioRel', 'In Implementation Ratio', '#434b89')
-                                    }
+                                    overlay={() => onKpiPopover(bugKpis, 'inImplementationRatioRel', 'In Implementation Ratio', '#434b89')}
                                 >
-                                    <div>{inImplementationRatioRel} %</div>
+                                    <div>{(inImplementationRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'inImplementationRatioRel')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'inImplementationRatioRel')} />
                             </td>
                         </tr>
                         <tr>
@@ -127,13 +121,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histBugKpis, 'inInstallationRatioRel', 'In Installation Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(bugKpis, 'inInstallationRatioRel', 'In Installation Ratio', '#434b89')}
                                 >
-                                    <div>{inInstallationRatioRel} %</div>
+                                    <div>{(inInstallationRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'inInstallationRatioRel')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'inInstallationRatioRel')} />
                             </td>
                         </tr>
                         <tr>
@@ -144,13 +138,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histBugKpis, 'inRetestRatioRel', 'In Retest Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(bugKpis, 'inRetestRatioRel', 'In Retest Ratio', '#434b89')}
                                 >
-                                    <div>{inRetestRatioRel} %</div>
+                                    <div>{(inRetestRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'inRetestRatioRel')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'inRetestRatioRel')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -159,13 +153,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histBugKpis, 'fixedRatio', 'Fixed Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(bugKpis, 'fixedRatio', 'Fixed Ratio', '#434b89')}
                                 >
-                                    <div>{fixedRatio} %</div>
+                                    <div>{(fixedRatio * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'fixedRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'fixedRatio')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
@@ -174,13 +168,13 @@ const BugColumn = ({ bugs, milestones, onDetails, onKpiPopover }) => {
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histBugKpis, 'rejectedRatio', 'Rejected Ratio', '#fdc668')}
+                                    overlay={() => onKpiPopover(bugKpis, 'rejectedRatio', 'Rejected Ratio', '#fdc668')}
                                 >
-                                    <div>{rejectedRatio} %</div>
+                                    <div>{(rejectedRatio * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histBugKpis, 'rejectedRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'rejectedRatio')} />
                             </td>
                         </tr>
                     </tbody>

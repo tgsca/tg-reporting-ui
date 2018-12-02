@@ -7,9 +7,9 @@ import BugColumn from './bug/bugColumn';
 import { getProjects } from '../services/projectService';
 import { getMilestonesByProject } from '../services/milestoneService';
 import { getCyclesByProject } from '../services/cycleService';
-import { getResultsByCycle } from '../services/resultService';
-import { getCoveragesByCycle } from '../services/coverageService';
-import { getDefectsByProject } from '../services/defectService';
+import { getResultsByCycle, getResultKpisByCycle } from '../services/resultService';
+import { getCoveragesByCycle, getCoverageKpisByCycle } from '../services/coverageService';
+import { getDefectsByProject, getHistoricalBugKpisByProject } from '../services/defectService';
 import PillGroup from './common/pillGroup';
 import TabGroup from './common/tabGroup';
 import CoverageStackedArea from './coverage/coverageStackedArea';
@@ -23,10 +23,13 @@ class Dashboard extends Component {
         currentProject: {},
         milestones: [],
         defects: [],
+        bugKpis: [],
         cycles: [],
         currentCycle: {},
         coverages: [],
+        coverageKpis: [],
         results: [],
+        resultKpis: [],
         details: null
     };
 
@@ -59,10 +62,22 @@ class Dashboard extends Component {
         this.setState({ results });
     }
 
+    async populateResultKpis(cycle) {
+        if (!cycle) return;
+        const { data: resultKpis } = await getResultKpisByCycle(cycle);
+        this.setState({ resultKpis });
+    }
+
     async populateCoverages(cycle) {
         if (!cycle) return;
         const { data: coverages } = await getCoveragesByCycle(cycle);
         this.setState({ coverages });
+    }
+
+    async populateCoverageKpis(cycle) {
+        if (!cycle) return;
+        const { data: coverageKpis } = await getCoverageKpisByCycle(cycle);
+        this.setState({ coverageKpis });
     }
 
     async populateDefects(project) {
@@ -71,20 +86,28 @@ class Dashboard extends Component {
         this.setState({ defects });
     }
 
+    async populateBugKpis(project) {
+        if (!project) return;
+        const { data: bugKpis } = await getHistoricalBugKpisByProject(project);
+        this.setState({ bugKpis });
+    }
+
     async componentDidMount() {
         await this.populateProjects();
 
         // populate project dependent
         await this.populateMilestones(this.state.currentProject);
         await this.populateDefects(this.state.currentProject);
+        await this.populateBugKpis(this.state.currentProject);
         await this.populateCycles(this.state.currentProject);
 
         // populate cycle dependent
         await this.populateCoverages(this.state.currentCycle);
+        await this.populateCoverageKpis(this.state.currentCycle);
         await this.populateResults(this.state.currentCycle);
+        await this.populateResultKpis(this.state.currentCycle);
     }
 
-    // TODO: refactor to use "populate" functions above
     handleProjectSelect = async currentProject => {
         this.setState({
             currentProject,
@@ -105,10 +128,13 @@ class Dashboard extends Component {
         // populate project dependent
         await this.populateMilestones(currentProject);
         await this.populateDefects(currentProject);
+        await this.populateBugKpis(this.state.currentProject);
 
         // populate cycle dependent
         await this.populateCoverages(currentCycle);
+        await this.populateCoverageKpis(this.state.currentCycle);
         await this.populateResults(currentCycle);
+        await this.populateResultKpis(this.state.currentCycle);
     };
 
     handleCycleSelect = async currentCycle => {
@@ -117,7 +143,9 @@ class Dashboard extends Component {
         });
 
         await this.populateCoverages(currentCycle);
+        await this.populateCoverageKpis(this.state.currentCycle);
         await this.populateResults(currentCycle);
+        await this.populateResultKpis(this.state.currentCycle);
     };
 
     handleDetails = domain => {
@@ -134,7 +162,19 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { projects, currentProject, milestones, defects, cycles, currentCycle, coverages, results } = this.state;
+        const {
+            projects,
+            currentProject,
+            milestones,
+            defects,
+            bugKpis,
+            cycles,
+            currentCycle,
+            coverages,
+            coverageKpis,
+            results,
+            resultKpis
+        } = this.state;
 
         return (
             <div className="card border-dark">
@@ -158,9 +198,15 @@ class Dashboard extends Component {
                         </div>
                         <div className="card-body">
                             <CardGroup>
-                                <CoverageColumn coverages={coverages} onDetails={this.handleDetails} onKpiPopover={this.popoverSingleKpi} />
+                                <CoverageColumn
+                                    coverages={coverages}
+                                    coverageKpis={coverageKpis}
+                                    onDetails={this.handleDetails}
+                                    onKpiPopover={this.popoverSingleKpi}
+                                />
                                 <ExecutionColumn
                                     results={results}
+                                    resultKpis={resultKpis}
                                     milestones={milestones}
                                     currentCycle={currentCycle}
                                     onDetails={this.handleDetails}
@@ -168,13 +214,14 @@ class Dashboard extends Component {
                                 />
                                 <BugColumn
                                     bugs={defects}
+                                    bugKpis={bugKpis}
                                     milestones={milestones}
                                     onDetails={this.handleDetails}
                                     onKpiPopover={this.popoverSingleKpi}
                                 />
                             </CardGroup>
-                            {this.state.details === 'coverage' && <CoverageStackedArea coverages={coverages} />}
-                            {this.state.details === 'execution' && <ExecutionStackedArea results={results} milestones={milestones} />}
+                            {this.state.details === 'coverage' && <CoverageStackedArea coverageKpis={coverageKpis} />}
+                            {this.state.details === 'execution' && <ExecutionStackedArea resultKpis={resultKpis} milestones={milestones} />}
                             {this.state.details === 'bug' && <DefectStackedArea defects={defects} milestones={milestones} />}
                         </div>
                     </div>

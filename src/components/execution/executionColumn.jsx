@@ -5,8 +5,7 @@ import Table from 'react-bootstrap/lib/Table';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import ExecutionPie from './executionPie';
 import TrendIcon from '../common/trendIcon';
-import { getHistoricalResultKpis, getLastKPIs, getLastResult } from '../../services/resultService';
-import { checkDeltaToLastPeriod } from '../../services/helper/itemArray';
+import { getLast, checkDeltaToLastPeriod } from '../../services/helper/itemArray';
 import chartConfig from '../../config/chart.json';
 
 function getHeaderClasses(blockedRatio, failedRatio) {
@@ -34,19 +33,34 @@ function getTimeElapsedValue(timeElapsedRatio) {
     return timeElapsedRatio > 1 ? '> 100' : (timeElapsedRatio * 100).toFixed(0);
 }
 
-const ExecutionColumn = ({ results, milestones, currentCycle, onDetails, onKpiPopover }) => {
+const ExecutionColumn = ({ results, resultKpis, milestones, currentCycle, onDetails, onKpiPopover }) => {
     if (results.length === 0) return null;
 
-    const histResultKpis = getHistoricalResultKpis(results);
-    const currResultKpis = getLastKPIs(results);
-    const { executionRatio, timeElapsedRatio, blockedRatio, failedRatio, passedRatio } = currResultKpis;
+    const currResultKpis = getLast(resultKpis);
+    const {
+        totalCount,
+        executed,
+        executedRatio,
+        passed,
+        passedRatioRel,
+        failed,
+        failedRatioRel,
+        unexecuted,
+        unexecutedRatio,
+        blocked,
+        blockedRatioRel,
+        notCompleted,
+        notCompletedRatioRel,
+        noRun,
+        noRunRatioRel
+    } = currResultKpis;
 
-    const currResult = getLastResult(results);
-    const { sum, passed, failed, blocked, notCompleted, noRun } = currResult;
+    const { KPIs } = getLast(results);
+    const timeElapsedRatio = KPIs.timeElapsedRatio;
 
     const nestedClass = 'fa fa-angle-right';
 
-    let cardHeaderClass = getHeaderClasses(blockedRatio, failedRatio);
+    let cardHeaderClass = getHeaderClasses(blockedRatioRel, failedRatioRel);
 
     return (
         <Card>
@@ -67,25 +81,25 @@ const ExecutionColumn = ({ results, milestones, currentCycle, onDetails, onKpiPo
                     <tbody className="text-small">
                         <tr className="table-top-parent">
                             <td>Sum</td>
-                            <td className="text-right">{sum}</td>
+                            <td className="text-right">{totalCount}</td>
                             <td />
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(results, 'sum')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'totalCount')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
                             <td>Executed</td>
-                            <td className="text-right">{passed + failed}</td>
+                            <td className="text-right">{executed}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histResultKpis, 'executionRatio', 'Execution Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(resultKpis, 'executedRatio', 'Execution Ratio', '#434b89')}
                                 >
-                                    <div>{(executionRatio * 100).toFixed(0)} %</div>
+                                    <div>{(executedRatio * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histResultKpis, 'executionRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'executedRatio')} />
                             </td>
                         </tr>
                         <tr>
@@ -96,13 +110,13 @@ const ExecutionColumn = ({ results, milestones, currentCycle, onDetails, onKpiPo
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histResultKpis, 'passedRatioAbs', 'Passed Ratio', '#5ab620')}
+                                    overlay={() => onKpiPopover(resultKpis, 'passedRatioRel', 'Passed Ratio', '#5ab620')}
                                 >
-                                    <div>{(passedRatio * 100).toFixed(0)} %</div>
+                                    <div>{(passedRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histResultKpis, 'passedRatioAbs')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'passedRatioRel')} />
                             </td>
                         </tr>
                         <tr>
@@ -113,36 +127,79 @@ const ExecutionColumn = ({ results, milestones, currentCycle, onDetails, onKpiPo
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(histResultKpis, 'failedRatioAbs', 'Failed Ratio', '#fd6868')}
+                                    overlay={() => onKpiPopover(resultKpis, 'failedRatioRel', 'Failed Ratio', '#fd6868')}
                                 >
-                                    <div>{(failedRatio * 100).toFixed(0)} %</div>
+                                    <div>{(failedRatioRel * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histResultKpis, 'failedRatioAbs')} />
-                            </td>
-                        </tr>
-                        <tr className="table-parent">
-                            <td>Blocked</td>
-                            <td className="text-right">{blocked}</td>
-                            <td className="text-right">
-                                <OverlayTrigger
-                                    placement="bottom"
-                                    overlay={() => onKpiPopover(histResultKpis, 'blockedRatio', 'Blocked Ratio', '#fdc668')}
-                                >
-                                    <div>{(blockedRatio * 100).toFixed(0)} %</div>
-                                </OverlayTrigger>
-                            </td>
-                            <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histResultKpis, 'blockedRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'failedRatioRel')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
                             <td>Unexecuted</td>
-                            <td className="text-right">{notCompleted + noRun}</td>
-                            <td className="text-right">{(((notCompleted + noRun) / sum) * 100).toFixed(0)} %</td>
+                            <td className="text-right">{unexecuted}</td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(histResultKpis, 'unexecutedRatio')} />
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={() => onKpiPopover(resultKpis, 'unexecutedRatio', 'Unexecuted Ratio', '#434b89')}
+                                >
+                                    <div>{(unexecutedRatio * 1).toFixed(0)} %</div>
+                                </OverlayTrigger>
+                            </td>
+                            <td className="text-right">
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'unexecutedRatio')} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i className={nestedClass} /> Blocked
+                            </td>
+                            <td className="text-right">{blocked}</td>
+                            <td className="text-right">
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={() => onKpiPopover(resultKpis, 'blockedRatioRel', 'Blocked Ratio', '#fdc668')}
+                                >
+                                    <div>{(blockedRatioRel * 1).toFixed(0)} %</div>
+                                </OverlayTrigger>
+                            </td>
+                            <td className="text-right">
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'blockedRatioRel')} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i className={nestedClass} /> Not Completed
+                            </td>
+                            <td className="text-right">{notCompleted}</td>
+                            <td className="text-right">
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={() => onKpiPopover(resultKpis, 'notCompletedRatioRel', 'Not Completed Ratio', '#ccbe00')}
+                                >
+                                    <div>{(notCompletedRatioRel * 1).toFixed(0)} %</div>
+                                </OverlayTrigger>
+                            </td>
+                            <td className="text-right">
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'notCompletedRatioRel')} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <i className={nestedClass} /> No Run
+                            </td>
+                            <td className="text-right">{noRun}</td>
+                            <td className="text-right">
+                                <OverlayTrigger
+                                    placement="bottom"
+                                    overlay={() => onKpiPopover(resultKpis, 'noRunRatioRel', 'No Run Ratio', '#b3b3b3')}
+                                >
+                                    <div>{(noRunRatioRel * 1).toFixed(0)} %</div>
+                                </OverlayTrigger>
+                            </td>
+                            <td className="text-right">
+                                <TrendIcon change={checkDeltaToLastPeriod(resultKpis, 'noRunRatioRel')} />
                             </td>
                         </tr>
                         <tr className="table-top-parent">
