@@ -11,10 +11,17 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
     if (coverages.length === 0) return null;
 
     const currCoverageKpis = getLast(coverageKpis);
-    const { coverageRatio, blockedRatioAbs, inProgressRatioAbs, openRatioAbs } = currCoverageKpis;
-
-    const currCoverage = getLast(coverages);
-    const { sum, covered, onHold, inProgress, open } = currCoverage;
+    const {
+        totalCount,
+        covered,
+        coverageRatio,
+        blocked,
+        blockedRatioAbs,
+        inProgress,
+        inProgressRatioAbs,
+        open,
+        openRatioAbs
+    } = currCoverageKpis;
 
     return (
         <Card className="">
@@ -35,7 +42,7 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                     <tbody className="text-small">
                         <tr className="table-top-parent">
                             <td>Sum</td>
-                            <td className="text-right">{sum}</td>
+                            <td className="text-right">{totalCount}</td>
                             <td />
                             <td className="text-right">
                                 <TrendIcon change={checkDeltaToLastPeriod(coverageKpis, 'totalCount')} />
@@ -58,7 +65,7 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                         </tr>
                         <tr className="table-parent">
                             <td>Blocked</td>
-                            <td className="text-right">{onHold}</td>
+                            <td className="text-right">{blocked}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"

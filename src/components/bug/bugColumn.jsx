@@ -12,18 +12,26 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
 
     const currBugKpis = getLast(bugKpis);
     const {
+        totalCount,
+        fixed,
         fixedRatio,
+        rejected,
         rejectedRatio,
+        open,
         openRatio,
+        new: n,
         newRatioRel,
+        inClarification,
         inClarificationRatioRel,
+        inImplementation,
         inImplementationRatioRel,
+        inInstallation,
         inInstallationRatioRel,
-        inRetestRatioRel
+        inRetest,
+        inRetestRatioRel,
+        closed,
+        closedRatio
     } = currBugKpis;
-
-    const currBug = getLast(bugs);
-    const { sum, new: open, inClarification, inImplementation, inInstallation, inRetest, closed, rejected } = currBug;
 
     const nestedClass = 'fa fa-angle-right';
 
@@ -46,7 +54,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                     <tbody className="text-small">
                         <tr className="table-top-parent">
                             <td>Sum</td>
-                            <td className="text-right">{sum.sum}</td>
+                            <td className="text-right">{totalCount}</td>
                             <td />
                             <td className="text-right">
                                 <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'totalCount', 'number')} />
@@ -54,9 +62,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                         </tr>
                         <tr className="table-parent">
                             <td>Open</td>
-                            <td className="text-right">
-                                {open.sum + inClarification.sum + inImplementation.sum + inInstallation.sum + inRetest.sum}
-                            </td>
+                            <td className="text-right">{open}</td>
                             <td className="text-right">{(openRatio * 1).toFixed(0)} %</td>
                             <td className="text-right">
                                 <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'openRatio')} />
@@ -66,7 +72,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                             <td>
                                 <i className={nestedClass} /> New
                             </td>
-                            <td className="text-right">{open.sum}</td>
+                            <td className="text-right">{n}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
@@ -83,7 +89,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                             <td>
                                 <i className={nestedClass} /> In Clarification
                             </td>
-                            <td className="text-right">{inClarification.sum}</td>
+                            <td className="text-right">{inClarification}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
@@ -100,7 +106,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                             <td>
                                 <i className={nestedClass} /> In Implementation
                             </td>
-                            <td className="text-right">{inImplementation.sum}</td>
+                            <td className="text-right">{inImplementation}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
@@ -117,7 +123,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                             <td>
                                 <i className={nestedClass} /> In Installation
                             </td>
-                            <td className="text-right">{inInstallation.sum}</td>
+                            <td className="text-right">{inInstallation}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
@@ -134,7 +140,7 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                             <td>
                                 <i className={nestedClass} /> In Retest
                             </td>
-                            <td className="text-right">{inRetest.sum}</td>
+                            <td className="text-right">{inRetest}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
@@ -149,22 +155,22 @@ const BugColumn = ({ bugs, bugKpis, milestones, onDetails, onKpiPopover }) => {
                         </tr>
                         <tr className="table-parent">
                             <td>Fixed</td>
-                            <td className="text-right">{closed.sum}</td>
+                            <td className="text-right">{closed}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
-                                    overlay={() => onKpiPopover(bugKpis, 'fixedRatio', 'Fixed Ratio', '#434b89')}
+                                    overlay={() => onKpiPopover(bugKpis, 'closedRatio', 'Closed Ratio', '#434b89')}
                                 >
-                                    <div>{(fixedRatio * 1).toFixed(0)} %</div>
+                                    <div>{(closedRatio * 1).toFixed(0)} %</div>
                                 </OverlayTrigger>
                             </td>
                             <td className="text-right">
-                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'fixedRatio')} />
+                                <TrendIcon change={checkDeltaToLastPeriod(bugKpis, 'closedRatio')} />
                             </td>
                         </tr>
                         <tr className="table-parent">
                             <td>Rejected</td>
-                            <td className="text-right">{rejected.sum}</td>
+                            <td className="text-right">{rejected}</td>
                             <td className="text-right">
                                 <OverlayTrigger
                                     placement="bottom"
