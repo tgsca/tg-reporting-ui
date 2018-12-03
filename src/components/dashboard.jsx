@@ -6,7 +6,7 @@ import ExecutionColumn from './execution/executionColumn';
 import BugColumn from './bug/bugColumn';
 import { getProjects } from '../services/projectService';
 import { getMilestonesByProject } from '../services/milestoneService';
-import { getCyclesByProject } from '../services/cycleService';
+import { getCyclesByProject, getCycleKpis } from '../services/cycleService';
 import { getResultsByCycle, getResultKpisByCycle } from '../services/resultService';
 import { getCoveragesByCycle, getCoverageKpisByCycle } from '../services/coverageService';
 import { getDefectsByProject, getHistoricalBugKpisByProject } from '../services/defectService';
@@ -26,6 +26,7 @@ class Dashboard extends Component {
         bugKpis: [],
         cycles: [],
         currentCycle: {},
+        currentCycleKpis: {},
         coverages: [],
         coverageKpis: [],
         results: [],
@@ -46,8 +47,9 @@ class Dashboard extends Component {
         const { data: cycles } = await getCyclesByProject(project);
         if (cycles.length === 0) return;
         const currentCycle = cycles[0];
+        const { data: currentCycleKpis } = await getCycleKpis(currentCycle);
 
-        this.setState({ cycles, currentCycle });
+        this.setState({ cycles, currentCycle, currentCycleKpis });
     }
 
     async populateMilestones(project) {
@@ -170,6 +172,7 @@ class Dashboard extends Component {
             bugKpis,
             cycles,
             currentCycle,
+            currentCycleKpis,
             coverages,
             coverageKpis,
             results,
@@ -209,6 +212,7 @@ class Dashboard extends Component {
                                     resultKpis={resultKpis}
                                     milestones={milestones}
                                     currentCycle={currentCycle}
+                                    currentCycleKpis={currentCycleKpis}
                                     onDetails={this.handleDetails}
                                     onKpiPopover={this.popoverSingleKpi}
                                 />

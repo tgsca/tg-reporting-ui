@@ -33,7 +33,7 @@ function getTimeElapsedValue(timeElapsedRatio) {
     return timeElapsedRatio > 1 ? '> 100' : (timeElapsedRatio * 100).toFixed(0);
 }
 
-const ExecutionColumn = ({ results, resultKpis, milestones, currentCycle, onDetails, onKpiPopover }) => {
+const ExecutionColumn = ({ results, resultKpis, milestones, currentCycle, currentCycleKpis, onDetails, onKpiPopover }) => {
     if (results.length === 0) return null;
 
     const currResultKpis = getLast(resultKpis);

@@ -6,6 +6,10 @@ function url(id = null) {
     return `${apiUrl[currentEnvironment]}/cycles` + (id ? `/${id}` : '');
 }
 
+function kpiUrl(id = null) {
+    return `${apiUrl[currentEnvironment]}/cycleKpis` + (id ? `/${id}` : '');
+}
+
 export function getCycle(id) {
     return http.get(url(id));
 }
@@ -27,6 +31,10 @@ export function saveCycle(cycle) {
     else {
         return http.put(url(cycle._id), _.pick(cycle, ['name', 'version', 'startDate', 'endDate', 'projectId']));
     }
+}
+
+export function getCycleKpis(cycle) {
+    return http.get(kpiUrl(cycle._id));
 }
 
 export default {
