@@ -23,6 +23,8 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
         openRatioAbs
     } = currCoverageKpis;
 
+    const nestedParentClass = 'fa fa-angle-right';
+
     return (
         <Card className="">
             <Card.Header>
@@ -49,7 +51,9 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                             </td>
                         </tr>
                         <tr className="table-parent">
-                            <td>Coverage</td>
+                            <td>
+                                <i className={nestedParentClass} /> Coverage
+                            </td>
                             <td className="text-right">{covered}</td>
                             <td className="text-right">
                                 <OverlayTrigger
@@ -64,7 +68,9 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                             </td>
                         </tr>
                         <tr className="table-parent">
-                            <td>Blocked</td>
+                            <td>
+                                <i className={nestedParentClass} /> Blocked
+                            </td>
                             <td className="text-right">{blocked}</td>
                             <td className="text-right">
                                 <OverlayTrigger
@@ -79,7 +85,9 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                             </td>
                         </tr>
                         <tr className="table-parent">
-                            <td>In Progress</td>
+                            <td>
+                                <i className={nestedParentClass} /> In Progress
+                            </td>
                             <td className="text-right">{inProgress}</td>
                             <td className="text-right">
                                 <OverlayTrigger
@@ -94,7 +102,9 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
                             </td>
                         </tr>
                         <tr className="table-parent">
-                            <td>Open</td>
+                            <td>
+                                <i className={nestedParentClass} /> Open
+                            </td>
                             <td className="text-right">{open}</td>
                             <td className="text-right">
                                 <OverlayTrigger
