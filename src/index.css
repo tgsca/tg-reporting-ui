@@ -31,10 +31,30 @@ code {
     color: red;
 }
 
+.text-intend-2 {
+    text-indent: 2px;
+}
+
+.text-intend-4 {
+    text-indent: 4px;
+}
+
+.text-intend-6 {
+    text-indent: 6px;
+}
+
+.text-intend-8 {
+    text-indent: 8px;
+}
+
+.text-intend-10 {
+    text-indent: 10px;
+}
+
 .table-top-parent {
-    background-color: aliceblue;
+    background-color: rgb(250, 250, 250);
 }
 
 .table-parent {
-    background-color: rgb(250, 250, 250);
+    background-color: rgb(255, 255, 255);
 }

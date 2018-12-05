@@ -52,6 +52,11 @@ class Dashboard extends Component {
         this.setState({ cycles, currentCycle, currentCycleKpis });
     }
 
+    async populateCyclesKpis() {
+        const { data: currentCycleKpis } = await getCycleKpis(this.state.currentCycle);
+        this.setState({ currentCycleKpis });
+    }
+
     async populateMilestones(project) {
         if (!project) return;
         const { data: milestones } = await getMilestonesByProject(project);
@@ -102,6 +107,7 @@ class Dashboard extends Component {
         await this.populateDefects(this.state.currentProject);
         await this.populateBugKpis(this.state.currentProject);
         await this.populateCycles(this.state.currentProject);
+        await this.populateCyclesKpis();
 
         // populate cycle dependent
         await this.populateCoverages(this.state.currentCycle);
@@ -121,11 +127,8 @@ class Dashboard extends Component {
             results: []
         });
 
-        // await this.populateCycles(currentProject);
-        const { data: cycles } = await getCyclesByProject(currentProject);
-        if (cycles.length === 0) return;
-        const currentCycle = cycles[0];
-        this.setState({ cycles, currentCycle });
+        await this.populateCycles(currentProject);
+        await this.populateCyclesKpis();
 
         // populate project dependent
         await this.populateMilestones(currentProject);
@@ -133,10 +136,11 @@ class Dashboard extends Component {
         await this.populateBugKpis(this.state.currentProject);
 
         // populate cycle dependent
+        const { currentCycle } = this.state;
         await this.populateCoverages(currentCycle);
-        await this.populateCoverageKpis(this.state.currentCycle);
+        await this.populateCoverageKpis(currentCycle);
         await this.populateResults(currentCycle);
-        await this.populateResultKpis(this.state.currentCycle);
+        await this.populateResultKpis(currentCycle);
     };
 
     handleCycleSelect = async currentCycle => {
@@ -145,9 +149,9 @@ class Dashboard extends Component {
         });
 
         await this.populateCoverages(currentCycle);
-        await this.populateCoverageKpis(this.state.currentCycle);
+        await this.populateCoverageKpis(currentCycle);
         await this.populateResults(currentCycle);
-        await this.populateResultKpis(this.state.currentCycle);
+        await this.populateResultKpis(currentCycle);
     };
 
     handleDetails = domain => {
