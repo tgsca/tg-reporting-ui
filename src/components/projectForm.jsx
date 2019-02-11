@@ -8,6 +8,7 @@ import Cycles from './cycles';
 class ProjectForm extends Form {
     state = {
         data: {
+            _id: null,
             name: '',
             description: ''
         },
@@ -26,9 +27,7 @@ class ProjectForm extends Form {
             const projectId = this.props.match.params.id;
             if (projectId === 'new') return;
 
-            const { data: cycles } = await getCyclesByProjectId(
-                this.props.match.params.id
-            );
+            const { data: cycles } = await getCyclesByProjectId(projectId);
             this.setState({ cycles });
         } catch (ex) {}
     }
@@ -41,8 +40,7 @@ class ProjectForm extends Form {
             const { data: project } = await service.getProject(projectId);
             this.setState({ data: this.mapToViewModel(project) });
         } catch (ex) {
-            if (ex.response && ex.response.status === 404)
-                this.props.history.replace('/not-found');
+            if (ex.response && ex.response.status === 404) this.props.history.replace('/not-found');
         }
     }
 
@@ -55,8 +53,8 @@ class ProjectForm extends Form {
     }
 
     async componentDidMount() {
-        await this.populateCycles();
         await this.populateProject();
+        await this.populateCycles();
     }
 
     doSubmit = async () => {
@@ -76,17 +74,12 @@ class ProjectForm extends Form {
     render() {
         const { params } = this.props.match;
         const projectId = params.id && params.id !== 'new' ? params.id : null;
+
         return (
             <React.Fragment>
                 <div className="card mb-12 margin-bottom">
-                    {projectId && (
-                        <div className="card-header">
-                            Edit Project [ID: {projectId}]
-                        </div>
-                    )}
-                    {!projectId && (
-                        <div className="card-header">Create New Project</div>
-                    )}
+                    {projectId && <div className="card-header">Edit Project [ID: {projectId}]</div>}
+                    {!projectId && <div className="card-header">Create New Project</div>}
                     <div className="card-body">
                         <div className="card-text">
                             <form onSubmit={this.handleSubmit}>
@@ -102,10 +95,7 @@ class ProjectForm extends Form {
                         <div className="card-header">Test Cycles</div>
                         <div className="card-body">
                             <div className="card-text">
-                                <Cycles
-                                    projectId={projectId}
-                                    onNewCyle={this.handleNewCycle}
-                                />
+                                <Cycles projectId={projectId} onNewCyle={this.handleNewCycle} />
                             </div>
                         </div>
                     </div>

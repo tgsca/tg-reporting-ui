@@ -12,7 +12,8 @@ class CycleForm extends Form {
             version: '',
             startDate: '',
             endDate: '',
-            projectId: ''
+            projectId: '',
+            status: ''
         },
         projects: [],
         errors: {}
@@ -24,7 +25,8 @@ class CycleForm extends Form {
         version: Joi.string().required(),
         startDate: Joi.string().required(),
         endDate: Joi.string().required(),
-        projectId: Joi.string().required()
+        projectId: Joi.string().required(),
+        status: Joi.string().required()
     };
 
     async populateCycle() {
@@ -55,7 +57,8 @@ class CycleForm extends Form {
             version: cycle.version,
             startDate: cycle.startDate,
             endDate: cycle.endDate,
-            projectId: cycle.project._id
+            projectId: cycle.project._id,
+            status: cycle.status
         };
     }
 
@@ -91,6 +94,12 @@ class CycleForm extends Form {
                                 {this.renderSelect('projectId', 'Project', this.state.projects)}
                                 {this.renderInput('name', 'Name')}
                                 {this.renderInput('version', 'Version')}
+                                {this.renderSelect('status', 'Status', [
+                                    { _id: 'PLANNED', name: 'PLANNED' },
+                                    { _id: 'RUNNING', name: 'RUNNING' },
+                                    { _id: 'PAUSED', name: 'PAUSED' },
+                                    { _id: 'FINISHED', name: 'FINISHED' }
+                                ])}
                                 {this.renderInput('startDate', 'Start Date')}
                                 {this.renderInput('endDate', 'End Date')}
                                 {this.renderButton('Save')}

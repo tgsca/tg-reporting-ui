@@ -123,7 +123,7 @@ const CoverageColumn = ({ coverages, coverageKpis, onDetails, onKpiPopover }) =>
             </Card.Body>
             <Card.Footer>
                 <small className="text-muted">
-                    Letztes Update: {moment(coverages[coverages.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
+                    Letztes Update: {moment.utc(coverages[coverages.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
                 </small>
             </Card.Footer>
         </Card>

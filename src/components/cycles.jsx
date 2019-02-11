@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import { paginate } from '../utils/paginate';
-import { getCycles, getCyclesByProjectId } from '../services/cycleService';
+import { getCycles, getCyclesByProject } from '../services/cycleService';
+import { getResultKpis } from '../services/resultService';
+import { getSorted, getLast } from '../services/helper/itemArray';
+import { getCoverageKpis } from '../services/coverageService';
+import service from '../services/projectService';
 import CycleTable from './cycleTable';
 import SearchBox from './common/searchBox';
 import Pagination from './common/pagination';
@@ -9,22 +13,68 @@ import PageSize from './common/pageSize';
 
 class Cycles extends Component {
     state = {
+        project: null,
         cycles: [],
-        sortColumn: { path: 'name', order: 'asc' },
+        coverageKpis: [],
+        resultKpis: [],
+        sortColumn: { path: 'endDate', order: 'asc' },
         pageSizes: [3, 5, 10, 20, 50],
         pageSize: 10,
         currentPage: 1,
         searchQuery: ''
     };
 
-    async componentDidMount() {
-        if (!this.props.projectId) {
-            const { data: cycles } = await getCycles();
+    async populateProject() {
+        const { data: project } = await service.getProject(this.props.projectId);
+        this.setState({ project });
+    }
+
+    async populateCoverageKpis() {
+        const { data: coverageKpis } = await getCoverageKpis();
+        this.setState({ coverageKpis });
+    }
+
+    async populateResultKpis() {
+        const { data: resultKpis } = await getResultKpis();
+        this.setState({ resultKpis });
+    }
+
+    async enrichCycles(cycles) {
+        let enrichedCycles = [];
+
+        for (let cycle of cycles) {
+            let filteredCoverages = this.state.coverageKpis.filter(c => cycle._id === c.cycle._id);
+            let filteredResults = this.state.resultKpis.filter(r => cycle._id === r.cycle._id);
+
+            const enrichedCycle = {
+                ...cycle,
+                coverages: { ...getLast(getSorted(filteredCoverages)) },
+                results: { ...getLast(getSorted(filteredResults)) }
+            };
+
+            enrichedCycles.push(enrichedCycle);
+        }
+        return enrichedCycles;
+    }
+
+    async populateCycles() {
+        const { project } = this.state;
+        if (!project) {
+            const { data } = await getCycles();
+            const cycles = await this.enrichCycles(data);
             this.setState({ cycles });
         } else {
-            const { data: cycles } = await getCyclesByProjectId(this.props.projectId);
+            const { data } = await getCyclesByProject(project);
+            const cycles = await this.enrichCycles(data);
             this.setState({ cycles });
         }
+    }
+
+    async componentDidMount() {
+        await this.populateProject();
+        await this.populateCoverageKpis();
+        await this.populateResultKpis();
+        await this.populateCycles();
     }
 
     handlePageChange = page => {
@@ -109,11 +159,7 @@ class Cycles extends Component {
                                 />
                             </div>
                             <div className="col text-right">
-                                <PageSize
-                                    pageSizes={pageSizes}
-                                    currentPageSize={pageSize}
-                                    onPageSizeChange={this.handlePageSizeChange}
-                                />
+                                <PageSize pageSizes={pageSizes} currentPageSize={pageSize} onPageSizeChange={this.handlePageSizeChange} />
                             </div>
                         </div>
                     </div>

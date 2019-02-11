@@ -217,7 +217,7 @@ class BugColumn extends Component {
                 </Card.Body>
                 <Card.Footer>
                     <small className="text-muted">
-                        Letztes Update: {moment(bugs[bugs.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
+                        Letztes Update: {moment.utc(bugs[bugs.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
                     </small>
                 </Card.Footer>
             </Card>

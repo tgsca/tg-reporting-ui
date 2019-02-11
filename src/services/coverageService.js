@@ -11,6 +11,10 @@ export function getCoverageKpisByCycle(cycle) {
     return http.get(`${apiUrl[currentEnvironment]}/coverageKpis?cycle._id=${cycle._id}`);
 }
 
+export function getCoverageKpis() {
+    return http.get(`${apiUrl[currentEnvironment]}/coverageKpis`);
+}
+
 export function getLastCoverageForPie(coverages) {
     const last = getLast(coverages);
     if (!last._id) return [];

@@ -189,7 +189,7 @@ class ExecutionColumn extends Component {
                 </Card.Body>
                 <Card.Footer>
                     <small className="text-muted">
-                        Letztes Update: {moment(results[results.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
+                        Letztes Update: {moment.utc(results[results.length - 1].reportingDate).format('DD.MM.YYYY HH:mm')}
                     </small>
                 </Card.Footer>
             </Card>

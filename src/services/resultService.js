@@ -7,8 +7,16 @@ export function getResultsByCycle(cycle) {
     return http.get(`${apiUrl[currentEnvironment]}/results?cycle._id=${cycle._id}`);
 }
 
+export function getResultKpisByProjectId(projectId) {
+    return http.get(`${apiUrl[currentEnvironment]}/resultKpis?cycle.project._id=${projectId}`);
+}
+
 export function getResultKpisByCycle(cycle) {
     return http.get(`${apiUrl[currentEnvironment]}/resultKpis?cycle._id=${cycle._id}`);
+}
+
+export function getResultKpis() {
+    return http.get(`${apiUrl[currentEnvironment]}/resultKpis`);
 }
 
 export function getLastResultForPie(results) {

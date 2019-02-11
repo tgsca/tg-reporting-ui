@@ -29,7 +29,7 @@ export function getCyclesByProjectId(id) {
 export function saveCycle(cycle) {
     if (!cycle._id) return http.post(url(), cycle);
     else {
-        return http.put(url(cycle._id), _.pick(cycle, ['name', 'version', 'startDate', 'endDate', 'projectId']));
+        return http.put(url(cycle._id), _.pick(cycle, ['name', 'version', 'startDate', 'endDate', 'projectId', 'status']));
     }
 }
 
